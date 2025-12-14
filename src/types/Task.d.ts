@@ -8,6 +8,10 @@ interface ITask {
 }
 
 
+interface IColumn {
+    id: TaskStatus;
+    title: string;
+}
 
 
-export { ITask, TaskStatus }
+export { ITask, TaskStatus, IColumn }
