@@ -31,11 +31,11 @@ export default function RootLayout({
       >
         <SidebarProvider>
           <AppSidebar />
+          <SidebarTrigger className="my-4 mr-4" />
           <div
-            className="flex m-4 gap-4 w-full 
+            className="m-4 w-full  
           "
           >
-            <SidebarTrigger />
             <main className="w-full h-full">{children}</main>
           </div>
         </SidebarProvider>
