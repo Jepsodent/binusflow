@@ -1,5 +1,6 @@
 import { IColumn, ITask } from "@/types/Task";
 import TaskCard from "./TaskCard";
+import { useDroppable } from "@dnd-kit/core";
 
 interface ColumnProps {
   column: IColumn;
@@ -8,11 +9,14 @@ interface ColumnProps {
 }
 
 const Column = (props: ColumnProps) => {
-  const { column, tasks, key } = props;
+  const { column, tasks } = props;
+  const { setNodeRef } = useDroppable({
+    id: column.id,
+  });
 
   return (
     <div
-      key={key}
+      ref={setNodeRef}
       className="flex flex-1 w-80 flex-col rounded-lg bg-neutral-200 p-4"
     >
       <h2 className="font-semibold text-center text-neutral-700 mb-4">
