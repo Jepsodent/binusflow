@@ -6,10 +6,20 @@ import { Input } from "@/components/ui/input";
 import { COLUMNS, INITIAL_TASKS } from "@/constants/Task.constants";
 import { ITask } from "@/types/Task";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [task, setTask] = useState<ITask[]>(INITIAL_TASKS);
+  const [task, setTask] = useState<ITask[]>([]);
+  useEffect(() => {
+    const stored = localStorage.getItem("task");
+    if (stored) {
+      setTask(JSON.parse(stored));
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("task", JSON.stringify(task));
+  }, [task]);
+
   const handleDragEvent = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -17,8 +27,8 @@ export default function Home() {
     const taskId = active.id;
     const columnId = over.id as ITask["status"];
 
-    setTask(() =>
-      task.map((t) => (t.id === taskId ? { ...t, status: columnId } : t))
+    setTask((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, status: columnId } : t))
     );
   };
 
