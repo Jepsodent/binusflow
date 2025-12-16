@@ -1,7 +1,9 @@
 "use client";
 
 import Column from "@/components/Column";
+import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { COLUMNS, INITIAL_TASKS } from "@/constants/Task.constants";
 import { ITask } from "@/types/Task";
@@ -16,6 +18,7 @@ export default function Home() {
       setTask(JSON.parse(stored));
     }
   }, []);
+
   useEffect(() => {
     localStorage.setItem("task", JSON.stringify(task));
   }, [task]);
@@ -36,7 +39,12 @@ export default function Home() {
     <div className="flex mt-4 flex-col gap-4 h-full ">
       <div className="w-full flex justify-end gap-10 mr-12">
         <Input placeholder="Search" className="max-w-150" />
-        <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
+          </DialogTrigger>
+          <Modal />
+        </Dialog>
       </div>
       <div className="flex gap-8 mt-4">
         <DndContext onDragEnd={handleDragEvent}>
