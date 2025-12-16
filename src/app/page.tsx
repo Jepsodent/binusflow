@@ -5,23 +5,20 @@ import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { COLUMNS, INITIAL_TASKS } from "@/constants/Task.constants";
+import { COLUMNS } from "@/constants/Task.constants";
+import useTaskStore from "@/store/TaskStore";
 import { ITask } from "@/types/Task";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
-  const [task, setTask] = useState<ITask[]>([]);
-  useEffect(() => {
-    const stored = localStorage.getItem("task");
-    if (stored) {
-      setTask(JSON.parse(stored));
-    }
-  }, []);
+  const tasks = useTaskStore((state) => state.tasks);
+  const initTask = useTaskStore((state) => state.initTask);
+  const updateTask = useTaskStore((state) => state.updateTask);
 
   useEffect(() => {
-    localStorage.setItem("task", JSON.stringify(task));
-  }, [task]);
+    initTask();
+  }, []);
 
   const handleDragEvent = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -29,9 +26,13 @@ export default function Home() {
     if (!over) return;
     const taskId = active.id;
     const columnId = over.id as ITask["status"];
-
-    setTask((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: columnId } : t))
+    const currentTask = tasks.find((t) => t.id === taskId);
+    if (!currentTask) return;
+    updateTask(
+      currentTask.id,
+      currentTask.title,
+      currentTask.description,
+      columnId
     );
   };
 
@@ -52,7 +53,7 @@ export default function Home() {
             <Column
               key={col.id}
               column={col}
-              tasks={task.filter((t) => t.status == col.id)}
+              tasks={tasks.filter((t) => t.status == col.id)}
             />
           ))}
         </DndContext>
