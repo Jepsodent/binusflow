@@ -1,5 +1,6 @@
 "use client";
 
+import AddTaskDialog from "@/components/AddTaskDialog";
 import Column from "@/components/Column";
 import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
@@ -40,12 +41,7 @@ export default function Home() {
     <div className="flex mt-4 flex-col gap-4 h-full ">
       <div className="w-full flex justify-end gap-10 mr-12">
         <Input placeholder="Search" className="max-w-150" />
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
-          </DialogTrigger>
-          <Modal />
-        </Dialog>
+        <AddTaskDialog />
       </div>
       <div className="flex gap-8 mt-4">
         <DndContext onDragEnd={handleDragEvent}>
