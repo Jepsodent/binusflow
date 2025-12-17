@@ -2,6 +2,7 @@ import { ITask } from "@/types/Task";
 import { Button } from "./ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { useDraggable } from "@dnd-kit/core";
+import { Ellipsis } from "lucide-react";
 
 interface TaskCardProps {
   task: ITask;
@@ -30,8 +31,7 @@ const TaskCard = (props: TaskCardProps) => {
               </CardDescription>
             </div>
             <div className="ml-auto flex gap-4">
-              <Button>test</Button>
-              <Button>test</Button>
+              <Ellipsis />
             </div>
           </div>
         </CardHeader>

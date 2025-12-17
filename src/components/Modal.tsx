@@ -34,6 +34,7 @@ const Modal = (props: ModalProps) => {
   const onSubmit = (values: TaskFormValues) => {
     console.log(values);
     addTask(values.title, values.description, values.status);
+    form.reset();
     onClose();
   };
 
@@ -59,6 +60,13 @@ const Modal = (props: ModalProps) => {
               label="Description"
               name="description"
               placeholder="Input your task description"
+            />
+            <FormComponent
+              form={form}
+              label="Status"
+              name="status"
+              placeholder="Select your task status"
+              type="select"
             />
           </div>
           <DialogFooter>
