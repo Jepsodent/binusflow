@@ -32,7 +32,7 @@ export default function Home() {
   }, [search]);
 
   const filterTask = useMemo(() => {
-    const dSearch = debounceSearch.toLowerCase().trim();
+    const dSearch = debounceSearch.toLowerCase();
     if (!dSearch) return tasks;
 
     return tasks.filter((task) => {
