@@ -13,27 +13,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormComponent from "./FormComponent";
 import { Form } from "./ui/form";
 import useTaskStore from "@/store/TaskStore";
+import { ITask } from "@/types/Task";
 
 interface ModalProps {
   onClose: () => void;
+  type: "ADD" | "UPDATE";
+  task?: ITask;
 }
 
 const Modal = (props: ModalProps) => {
-  const { onClose } = props;
+  const { onClose, type, task } = props;
   const addTask = useTaskStore((state) => state.addTask);
+  const updateTask = useTaskStore((state) => state.updateTask);
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      status: "TODO",
+      title: task?.title ?? "",
+      description: task?.description ?? "",
+      status: task?.status ?? "TODO",
     },
   });
 
   const onSubmit = (values: TaskFormValues) => {
-    console.log(values);
-    addTask(values.title, values.description, values.status);
+    if (type === "ADD") {
+      addTask(values.title, values.description, values.status);
+    }
+
+    if (type === "UPDATE" && task) {
+      updateTask(task.id, values.title, values.description, values.status);
+    }
     form.reset();
     onClose();
   };
@@ -43,9 +52,13 @@ const Modal = (props: ModalProps) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Add Tasks</DialogTitle>
+            <DialogTitle>
+              {type === "UPDATE" ? "Update Task" : "Add Task"}
+            </DialogTitle>
             <DialogDescription>
-              Fill in the details below to create a new task.
+              {type === "ADD"
+                ? "Fill in the details below to create a new task."
+                : "Update your task details below"}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-5 mt-4">

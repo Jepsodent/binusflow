@@ -1,26 +1,46 @@
 "use client";
 
-import AddTaskDialog from "@/components/AddTaskDialog";
 import Column from "@/components/Column";
-import Modal from "@/components/Modal";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
 import { COLUMNS } from "@/constants/Task.constants";
 import useTaskStore from "@/store/TaskStore";
 import { ITask } from "@/types/Task";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import TaskDialog from "@/components/TaskDialog";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const tasks = useTaskStore((state) => state.tasks);
   const initTask = useTaskStore((state) => state.initTask);
   const updateTask = useTaskStore((state) => state.updateTask);
+  const [search, setSearch] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState<string>("");
 
+  // initial
   useEffect(() => {
     initTask();
   }, []);
 
+  // filter
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const filterTask = useMemo(() => {
+    const dSearch = debounceSearch.toLowerCase().trim();
+    if (!dSearch) return tasks;
+
+    return tasks.filter((task) => {
+      return task.title.includes(dSearch) || task.description.includes(dSearch);
+    });
+  }, [tasks, debounceSearch]);
+
+  // drag event
   const handleDragEvent = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -40,8 +60,15 @@ export default function Home() {
   return (
     <div className="flex mt-4 flex-col gap-4 h-full ">
       <div className="w-full flex justify-end gap-10 mr-12">
-        <Input placeholder="Search" className="max-w-150" />
-        <AddTaskDialog />
+        <Input
+          placeholder="Search"
+          className="max-w-150"
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
+        />
+        <TaskDialog type="ADD">
+          <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
+        </TaskDialog>
       </div>
       <div className="flex gap-8 mt-4">
         <DndContext onDragEnd={handleDragEvent}>
@@ -49,7 +76,7 @@ export default function Home() {
             <Column
               key={col.id}
               column={col}
-              tasks={tasks.filter((t) => t.status == col.id)}
+              tasks={filterTask.filter((t) => t.status == col.id)}
             />
           ))}
         </DndContext>
