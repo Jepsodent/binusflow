@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Dialog, DialogTrigger } from "./ui/dialog";
-import { Button } from "./ui/button";
 import Modal from "./Modal";
 import { ITask } from "@/types/Task";
+import ModalDelete from "./ModalDelete";
 
 interface DialogProps {
-  type: "ADD" | "UPDATE";
+  type: "ADD" | "UPDATE" | "DELETE";
   task?: ITask;
   children: React.ReactNode;
 }
@@ -17,7 +17,11 @@ const TaskDialog = (props: DialogProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <Modal onClose={() => setOpen(false)} type={type} task={task} />
+      {type === "ADD" || type === "UPDATE" ? (
+        <Modal onClose={() => setOpen(false)} type={type} task={task} />
+      ) : (
+        <ModalDelete />
+      )}
     </Dialog>
   );
 };

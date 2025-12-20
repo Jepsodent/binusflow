@@ -71,7 +71,10 @@ export default function Home() {
           value={search}
         />
         <TaskDialog type="ADD">
-          <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
+          <Button className="bg-blue-500 hover:bg-blue-400">Add Task</Button>
+        </TaskDialog>
+        <TaskDialog type="DELETE">
+          <Button className="bg-red-500 hover:bg-red-400">Delete All</Button>
         </TaskDialog>
       </div>
       <div className="flex gap-8 mt-4">

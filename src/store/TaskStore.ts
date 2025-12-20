@@ -10,6 +10,7 @@ interface TaskState {
     addTask: (title: string, description: string, status: TaskStatus) => void,
     updateTask: (id: string, title: string, description: string, status: TaskStatus) => void,
     deleteTask: (id: string) => void,
+    deleteAllTask: () => void
 }
 
 const useTaskStore = create<TaskState>((set) => ({
@@ -23,7 +24,7 @@ const useTaskStore = create<TaskState>((set) => ({
                 console.error('Failed to get item from localStorage : ', error);
             }
         } else {
-            set({ tasks: INITIAL_TASKS });
+            set({ tasks: [] });
         }
     },
     addTask: (title, description, status) => {
@@ -61,6 +62,10 @@ const useTaskStore = create<TaskState>((set) => ({
             localStorage.setItem('task', JSON.stringify(deletedTask));
             return { tasks: deletedTask }
         })
+    },
+    deleteAllTask: () => {
+        localStorage.removeItem('task')
+        set({ tasks: [] })
     }
 }));
 
