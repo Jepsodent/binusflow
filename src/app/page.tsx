@@ -34,9 +34,13 @@ export default function Home() {
   const filterTask = useMemo(() => {
     const dSearch = debounceSearch.toLowerCase();
     if (!dSearch) return tasks;
-
+    console.log(dSearch);
     return tasks.filter((task) => {
-      return task.title.includes(dSearch) || task.description.includes(dSearch);
+      console.log(task.title);
+      return (
+        task.title.toLowerCase().includes(dSearch) ||
+        task.description.toLowerCase().includes(dSearch)
+      );
     });
   }, [tasks, debounceSearch]);
 
