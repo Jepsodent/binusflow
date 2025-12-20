@@ -1,7 +1,17 @@
 import { ITask } from "@/types/Task";
-import { Button } from "./ui/button";
+
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { useDraggable } from "@dnd-kit/core";
+import { Ellipsis } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import useTaskStore from "@/store/TaskStore";
+import TaskDialog from "./TaskDialog";
 
 interface TaskCardProps {
   task: ITask;
@@ -13,25 +23,47 @@ const TaskCard = (props: TaskCardProps) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
   });
+  const deleteTask = useTaskStore((state) => state.deleteTask);
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
   return (
-    <div style={style} {...attributes} {...listeners} ref={setNodeRef}>
-      <Card className="cursor-grab bg-neutral-50 shadow-sm hover:shadow-md">
+    <div style={style} {...attributes} ref={setNodeRef}>
+      <Card className="bg-neutral-50 shadow-sm hover:shadow-md">
         <CardHeader>
-          <div className="flex flex-row gap-8">
-            <div>
+          <div className="flex flex-row">
+            <div {...listeners} className="cursor-grab w-full bg-red-50">
               <CardTitle>{task.title}</CardTitle>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 ">
                 {task.description}
               </CardDescription>
             </div>
-            <div className="ml-auto flex gap-4">
-              <Button>test</Button>
-              <Button>test</Button>
+            {/* DROPDOWN */}
+            <div className="ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Ellipsis />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40 p-4">
+                  <TaskDialog type="UPDATE" task={task}>
+                    <DropdownMenuItem
+                      className="hover:bg-gray-50 text-accent-foreground cursor-pointer font-semibold"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      Update
+                    </DropdownMenuItem>
+                  </TaskDialog>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-red-500 font-semibold hover:bg-gray-50"
+                    onClick={() => deleteTask(task.id)}
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </CardHeader>
