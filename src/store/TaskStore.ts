@@ -1,72 +1,75 @@
 import { create } from 'zustand';
 import { ITask, TaskStatus } from '@/types/Task';
 import { nanoid } from 'nanoid';
+import { persist } from 'zustand/middleware';
 
 
 interface TaskState {
     tasks: ITask[],
-    initTask: () => void,
-    addTask: (title: string, description: string, status: TaskStatus) => void,
-    updateTask: (id: string, title: string, description: string, status: TaskStatus) => void,
+    addTask: (title: string, description: string, status: TaskStatus, color: string) => void,
+    updateTask: (id: string, title: string, description: string, status: TaskStatus, color: string) => void,
     deleteTask: (id: string) => void,
-    deleteAllTask: () => void
+    deleteAllTask: () => void,
+    deleteTaskColor: (colorHex: string) => void;
+    updateTaskColor: (colorHex: string, updatedColor: string) => void
 }
 
-const useTaskStore = create<TaskState>((set) => ({
-    tasks: [],
-    initTask: () => {
-        const storedTask = localStorage.getItem('task');
-        if (storedTask) {
-            try {
-                set({ tasks: JSON.parse(storedTask) })
-            } catch (error) {
-                console.error('Failed to get item from localStorage : ', error);
+const useTaskStore = create<TaskState>()(
+    persist(
+        (set) => ({
+            tasks: [],
+            addTask: (title, description, status, color) => {
+                const newTask: ITask = {
+                    id: nanoid(),
+                    description: description,
+                    status: status,
+                    title: title,
+                    color: color
+                }
+                set((state) => {
+                    const newTasks = [...state.tasks, newTask];
+                    return { tasks: newTasks };
+                });
+            },
+            updateTask: (id, title, description, status, color) => {
+                set((state) => {
+                    const updatedTask = state.tasks.map((t) => (
+                        t.id === id ?
+                            {
+                                ...t,
+                                title,
+                                description,
+                                status,
+                                color
+                            }
+                            : t
+                    ))
+                    return { tasks: updatedTask };
+                })
+            },
+            deleteTask: (id) => {
+                set((state) => {
+                    const deletedTask = state.tasks.filter((t) => t.id !== id);
+                    return { tasks: deletedTask }
+                })
+            },
+            deleteAllTask: () => {
+                set({ tasks: [] })
+            },
+            deleteTaskColor: (colorHex) => {
+                set((state) => {
+                    const updatedTask = state.tasks.map((t) => t.color === colorHex ? { ...t, color: "#000000" } : t)
+                    return { tasks: updatedTask };
+                });
+            },
+            updateTaskColor: (colorHex, updatedColor) => {
+                set((state) => {
+                    const updatedTask = state.tasks.map((t) => t.color === colorHex ? { ...t, color: updatedColor } : t)
+                    return { tasks: updatedTask };
+                })
             }
-        } else {
-            set({ tasks: [] });
-        }
-    },
-    addTask: (title, description, status) => {
-        const newTask: ITask = {
-            id: nanoid(),
-            description: description,
-            status: status,
-            title: title,
-        }
-        set((state) => {
-            const newTasks = [...state.tasks, newTask];
-            localStorage.setItem('task', JSON.stringify(newTasks));
-            return { tasks: newTasks };
-        });
-    },
-    updateTask: (id, title, description, status) => {
-        set((state) => {
-            const updatedTask = state.tasks.map((t) => (
-                t.id === id ?
-                    {
-                        ...t,
-                        title,
-                        description,
-                        status
-                    }
-                    : t
-            ))
-            localStorage.setItem('task', JSON.stringify(updatedTask));
-            return { tasks: updatedTask };
-        })
-    },
-    deleteTask: (id) => {
-        set((state) => {
-            const deletedTask = state.tasks.filter((t) => t.id !== id);
-            localStorage.setItem('task', JSON.stringify(deletedTask));
-            return { tasks: deletedTask }
-        })
-    },
-    deleteAllTask: () => {
-        localStorage.removeItem('task')
-        set({ tasks: [] })
-    }
-}));
+        }), { name: "task-storage" }
+    ));
 
 
 export default useTaskStore;

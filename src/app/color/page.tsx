@@ -8,13 +8,9 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function ColorPage() {
   const colors = useColorStore((state) => state.colors);
-  const initColor = useColorStore((state) => state.initColor);
+
   const [searchColor, setSearchColor] = useState<string>("");
   const [debounceSearch, setDebounceSearch] = useState<string>("");
-
-  useEffect(() => {
-    initColor();
-  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
