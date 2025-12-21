@@ -21,11 +21,15 @@ const useColorStore = create<ColorState>()(
                 set((state) => ({ colors: [...state.colors, newColor] }));
             },
             updateColor: (id, label, hex) => {
-                set((state) => ({
-                    colors: state.colors.map((c) =>
-                        c.id === id ? { ...c, label, hex } : c
-                    ),
-                }));
+                set((state) => {
+                    const oldColor = state.colors.find((c) => c.id === id)?.hex;
+
+                    const updatedColor = state.colors.map((c) => c.id === id ? { ...c, label, hex } : c);
+                    if (oldColor) {
+                        useTaskStore.getState().updateTaskColor(oldColor, hex);
+                    }
+                    return { colors: updatedColor }
+                });
             },
             removeColor: (id) => {
                 set((state) => {

@@ -11,6 +11,7 @@ interface TaskState {
     deleteTask: (id: string) => void,
     deleteAllTask: () => void,
     deleteTaskColor: (colorHex: string) => void;
+    updateTaskColor: (colorHex: string, updatedColor: string) => void
 }
 
 const useTaskStore = create<TaskState>()(
@@ -27,7 +28,6 @@ const useTaskStore = create<TaskState>()(
                 }
                 set((state) => {
                     const newTasks = [...state.tasks, newTask];
-                    localStorage.setItem('task', JSON.stringify(newTasks));
                     return { tasks: newTasks };
                 });
             },
@@ -44,30 +44,30 @@ const useTaskStore = create<TaskState>()(
                             }
                             : t
                     ))
-                    localStorage.setItem('task', JSON.stringify(updatedTask));
                     return { tasks: updatedTask };
                 })
             },
             deleteTask: (id) => {
                 set((state) => {
                     const deletedTask = state.tasks.filter((t) => t.id !== id);
-                    localStorage.setItem('task', JSON.stringify(deletedTask));
                     return { tasks: deletedTask }
                 })
             },
             deleteAllTask: () => {
-                localStorage.removeItem('task')
                 set({ tasks: [] })
             },
             deleteTaskColor: (colorHex) => {
                 set((state) => {
-                    console.log("Before deleteTaskColor:", state.tasks);
                     const updatedTask = state.tasks.map((t) => t.color === colorHex ? { ...t, color: "#000000" } : t)
-                    console.log("After deleteTaskColor:", updatedTask);
-                    localStorage.setItem('task', JSON.stringify(updatedTask));
                     return { tasks: updatedTask };
                 });
             },
+            updateTaskColor: (colorHex, updatedColor) => {
+                set((state) => {
+                    const updatedTask = state.tasks.map((t) => t.color === colorHex ? { ...t, color: updatedColor } : t)
+                    return { tasks: updatedTask };
+                })
+            }
         }), { name: "task-storage" }
     ));
 
