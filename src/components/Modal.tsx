@@ -14,6 +14,7 @@ import FormComponent from "./FormComponent";
 import { Form } from "./ui/form";
 import useTaskStore from "@/store/TaskStore";
 import { ITask } from "@/types/Task";
+import { useEffect } from "react";
 
 interface ModalProps {
   onClose: () => void;
@@ -34,6 +35,13 @@ const Modal = (props: ModalProps) => {
       status: task?.status ?? "TODO",
     },
   });
+  useEffect(() => {
+    form.reset({
+      title: task?.title ?? "",
+      description: task?.description ?? "",
+      status: task?.status ?? "TODO",
+    });
+  }, [task, form]);
 
   const onSubmit = (values: TaskFormValues) => {
     if (type === "ADD") {
