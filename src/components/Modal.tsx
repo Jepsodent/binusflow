@@ -14,6 +14,7 @@ import FormComponent from "./FormComponent";
 import { Form } from "./ui/form";
 import useTaskStore from "@/store/TaskStore";
 import { ITask } from "@/types/Task";
+import { useEffect } from "react";
 
 interface ModalProps {
   onClose: () => void;
@@ -32,16 +33,31 @@ const Modal = (props: ModalProps) => {
       title: task?.title ?? "",
       description: task?.description ?? "",
       status: task?.status ?? "TODO",
+      color: task?.color ?? "",
     },
   });
+  useEffect(() => {
+    form.reset({
+      title: task?.title ?? "",
+      description: task?.description ?? "",
+      status: task?.status ?? "TODO",
+      color: task?.color ?? "",
+    });
+  }, [task, form]);
 
   const onSubmit = (values: TaskFormValues) => {
     if (type === "ADD") {
-      addTask(values.title, values.description, values.status);
+      addTask(values.title, values.description, values.status, values.color);
     }
 
     if (type === "UPDATE" && task) {
-      updateTask(task.id, values.title, values.description, values.status);
+      updateTask(
+        task.id,
+        values.title,
+        values.description,
+        values.status,
+        values.color
+      );
     }
     form.reset();
     onClose();
@@ -79,7 +95,14 @@ const Modal = (props: ModalProps) => {
               label="Status"
               name="status"
               placeholder="Select your task status"
-              type="select"
+              type="status"
+            />
+            <FormComponent
+              form={form}
+              label="Color"
+              name="color"
+              placeholder="Select your color status"
+              type="color"
             />
           </div>
           <DialogFooter>

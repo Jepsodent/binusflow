@@ -31,13 +31,25 @@ const TaskCard = (props: TaskCardProps) => {
     : undefined;
   return (
     <div style={style} {...attributes} ref={setNodeRef}>
-      <Card className="bg-neutral-50 shadow-sm hover:shadow-md">
+      <Card
+        style={task.color ? { border: `2px solid ${task.color}` } : undefined}
+        className={`bg-neutral-50  shadow-sm hover:shadow-md`}
+      >
         <CardHeader>
           <div className="flex flex-row">
-            <div {...listeners} className="cursor-grab w-full bg-red-50">
+            <div {...listeners} className="cursor-grab w-full ">
               <CardTitle>{task.title}</CardTitle>
               <CardDescription className="mt-2 ">
                 {task.description}
+                {task.color.length > 0 && (
+                  <div className="flex mt-1.5 gap-2 items-center">
+                    <div
+                      className="rounded-2xl w-4 h-4"
+                      style={{ backgroundColor: task.color }}
+                    />
+                    <div>{task.color}</div>
+                  </div>
+                )}
               </CardDescription>
             </div>
             {/* DROPDOWN */}

@@ -13,15 +13,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const tasks = useTaskStore((state) => state.tasks);
-  const initTask = useTaskStore((state) => state.initTask);
   const updateTask = useTaskStore((state) => state.updateTask);
   const [search, setSearch] = useState("");
   const [debounceSearch, setDebounceSearch] = useState<string>("");
-
-  // initial
-  useEffect(() => {
-    initTask();
-  }, []);
 
   // filter
   useEffect(() => {
@@ -34,9 +28,7 @@ export default function Home() {
   const filterTask = useMemo(() => {
     const dSearch = debounceSearch.toLowerCase();
     if (!dSearch) return tasks;
-    console.log(dSearch);
     return tasks.filter((task) => {
-      console.log(task.title);
       return (
         task.title.toLowerCase().includes(dSearch) ||
         task.description.toLowerCase().includes(dSearch)
@@ -57,7 +49,8 @@ export default function Home() {
       currentTask.id,
       currentTask.title,
       currentTask.description,
-      columnId
+      columnId,
+      currentTask.color
     );
   };
 
@@ -71,7 +64,10 @@ export default function Home() {
           value={search}
         />
         <TaskDialog type="ADD">
-          <Button className="bg-blue-400 hover:bg-blue-500">Add Task</Button>
+          <Button className="bg-blue-500 hover:bg-blue-400">Add Task</Button>
+        </TaskDialog>
+        <TaskDialog type="DELETE">
+          <Button className="bg-red-500 hover:bg-red-400">Delete All</Button>
         </TaskDialog>
       </div>
       <div className="flex gap-8 mt-4">
