@@ -34,9 +34,7 @@ export default function Home() {
   const filterTask = useMemo(() => {
     const dSearch = debounceSearch.toLowerCase();
     if (!dSearch) return tasks;
-    console.log(dSearch);
     return tasks.filter((task) => {
-      console.log(task.title);
       return (
         task.title.toLowerCase().includes(dSearch) ||
         task.description.toLowerCase().includes(dSearch)

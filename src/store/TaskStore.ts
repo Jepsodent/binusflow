@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { ITask, TaskStatus } from '@/types/Task';
 import { nanoid } from 'nanoid';
-import { INITIAL_TASKS } from '@/constants/Task.constants';
 
 
 interface TaskState {
