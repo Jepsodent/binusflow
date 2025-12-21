@@ -8,15 +8,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { TaskFormValues } from "@/schemas/TaskSchema";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { TaskStatus } from "@/types/Task";
+import RenderInput from "@/components/RenderInput";
 
 interface FormFieldProps {
   name: keyof TaskFormValues;
@@ -24,9 +16,8 @@ interface FormFieldProps {
   placeholder: string;
   label: string;
   description?: string;
-  type?: "select" | "input";
+  type?: "status" | "input" | "color";
 }
-const TASK_STATUS: TaskStatus[] = ["TODO", "IN_PROGRESS", "DONE"];
 
 const FormComponent = (props: FormFieldProps) => {
   const { name, form, placeholder, label, description, type = "input" } = props;
@@ -38,24 +29,8 @@ const FormComponent = (props: FormFieldProps) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
-
           <FormControl>
-            {type === "input" ? (
-              <Input placeholder={placeholder} {...field} />
-            ) : (
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder={placeholder}></SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {TASK_STATUS.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace("_", " ")}{" "}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <RenderInput field={field} placeholder={placeholder} type={type} />
           </FormControl>
           <FormDescription>{description ? description : ""}</FormDescription>
           <FormMessage />

@@ -13,15 +13,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const tasks = useTaskStore((state) => state.tasks);
-  const initTask = useTaskStore((state) => state.initTask);
   const updateTask = useTaskStore((state) => state.updateTask);
   const [search, setSearch] = useState("");
   const [debounceSearch, setDebounceSearch] = useState<string>("");
-
-  // initial
-  useEffect(() => {
-    initTask();
-  }, []);
 
   // filter
   useEffect(() => {
@@ -55,7 +49,8 @@ export default function Home() {
       currentTask.id,
       currentTask.title,
       currentTask.description,
-      columnId
+      columnId,
+      currentTask.color
     );
   };
 
