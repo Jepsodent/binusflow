@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BinusFlow - React Task & Color Management System
+> **Tugas Advance Project - IT DIVISION**
 
-## Getting Started
+**BinusFlow** adalah aplikasi Kanban Board interaktif berbasis **React (Next.js)** yang dilengkapi dengan sistem konfigurasi warna kustom untuk membedakan kategori tugas secara visual. Proyek ini dibangun menggunakan arsitektur modern Next.js App Router, TailwindCSS v4, state management Zustand (dengan persistensi lokal), drag-and-drop `@dnd-kit/core`, serta form validation menggunakan Zod dan React Hook Form.
 
-First, run the development server:
+---
+
+## 📸 Tampilan UI (Screenshots)
+
+### 1. Dashboard / Kanban Board
+Halaman utama yang menampilkan papan Kanban dengan tiga kolom (`Todo`, `In Progress`, `Done`). Kartu tugas dapat digeser (drag & drop) antar kolom, dicari secara real-time, ditambahkan, diperbarui, atau dihapus. Kartu tugas memiliki garis tepi (border) berwarna dinamis sesuai kategori warna yang dipilih.
+
+![Dashboard / Kanban Board](./public/screenshots/todo.png)
+
+### 2. Configuration Colors Page
+Halaman konfigurasi warna untuk membuat label warna baru, memperbarui label/hex warna yang sudah ada, atau menghapusnya. Perubahan warna di sini akan secara otomatis memperbarui warna kartu tugas yang bersangkutan (Cascading Update).
+
+![Configuration Colors Page](./public/screenshots/color.png)
+
+---
+
+## 🌟 Fitur Utama (Core Features)
+
+1. **Interaktif Kanban Board (Drag & Drop)**
+   - Menggunakan library `@dnd-kit/core` untuk interaksi seret-dan-lepas kartu tugas antar kolom (`TODO`, `IN_PROGRESS`, `DONE`) secara mulus.
+2. **Cascading State Update (Sinkronisasi Otomatis)**
+   - **Update Warna**: Ketika Anda mengubah kode warna HEX di halaman *Configure*, semua kartu tugas yang menggunakan warna tersebut akan langsung berubah warna secara otomatis di *Dashboard*.
+   - **Hapus Warna**: Ketika suatu warna dihapus dari konfigurasi, kartu tugas yang menggunakan warna tersebut akan otomatis dialihkan ke warna default (`#000000`).
+3. **Pencarian Cepat dengan Debounce**
+   - Fitur pencarian tugas berdasarkan judul maupun deskripsi menggunakan delay debounce sebesar 300ms untuk menghemat performa rendering (re-render) saat mengetik.
+4. **Persistensi Data Lokal (Local Storage)**
+   - Menyimpan seluruh data tugas (`task-storage`) dan daftar warna (`colors-storage`) ke dalam `localStorage` browser menggunakan middleware `persist` dari **Zustand**. Data tetap aman dan tidak hilang meskipun halaman di-refresh.
+5. **Validasi Form yang Aman**
+   - Penambahan dan pembaruan data divalidasi di sisi klien menggunakan schema **Zod** dan **React Hook Form** untuk mencegah kesalahan pengisian data (seperti input kosong atau teks terlalu panjang).
+
+---
+
+## 🛠️ Tech Stack & Library
+
+* **Framework Utama**: Next.js 16.0.7 (App Router dengan Turbopack)
+* **Library UI & Styling**:
+  * **TailwindCSS v4**: Utilitas CSS modern dan berkinerja tinggi.
+  * **Shadcn UI & Radix UI**: Komponen UI aksesibel seperti Dialog, Dropdown Menu, Sidebar, Tooltip, dan Card.
+  * **Lucide React**: Library ikon vektor yang modern dan konsisten.
+* **State Management**:
+  * **Zustand**: Pengelola state global yang ringan dan cepat, dipadukan dengan middleware `persist` untuk penyimpanan otomatis ke `localStorage`.
+* **Drag-and-Drop**:
+  * **@dnd-kit/core**: Utilitas drag-and-drop berkinerja tinggi untuk ekosistem React.
+* **Form & Validation**:
+  * **React Hook Form & Zod**: Validasi skema input yang deklaratif dan aman secara tipe (type-safe).
+
+---
+
+## 📁 Struktur Folder & Arsitektur
+
+Berikut adalah struktur folder utama dari proyek **BinusFlow**:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+├── app/
+│   ├── color/
+│   │   └── page.tsx        # Halaman Konfigurasi Warna (/color)
+│   ├── globals.css         # Styling global TailwindCSS
+│   ├── layout.tsx          # Layout utama (Sidebar, Main Content wrapper)
+│   └── page.tsx            # Halaman utama Kanban Board (/)
+├── components/
+│   ├── color/              # Komponen khusus manajemen warna (Form, Card, Modal, dll)
+│   ├── ui/                 # Komponen dasar Shadcn UI (Button, Dialog, Input, dll)
+│   ├── Column.tsx          # Komponen Kolom Kanban (Drop Zone)
+│   ├── TaskCard.tsx        # Komponen Kartu Tugas (Draggable Item)
+│   ├── TaskDialog.tsx      # Modal untuk Tambah/Ubah/Hapus Tugas
+│   └── app-sidebar.tsx     # Komponen navigasi Sidebar (Dashboard & Configure)
+├── constants/
+│   └── Task.constants.ts   # Konstanta awal kolom dan data tugas dummy
+├── lib/
+│   └── utils.ts            # Helper utilitas classnames (cn)
+├── schemas/
+│   ├── ColorSchema.ts      # Skema validasi Zod untuk warna
+│   └── TaskSchema.ts       # Skema validasi Zod untuk tugas
+├── store/
+│   ├── ColorStore.ts       # Zustand store untuk konfigurasi warna (colors-storage)
+│   └── TaskStore.ts        # Zustand store untuk manajemen tugas (task-storage)
+└── types/
+    ├── Color.d.ts          # Type definition untuk tipe data Warna
+    └── Task.d.ts           # Type definition untuk tipe data Tugas & Kolom
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Cara Menjalankan Proyek Secara Lokal
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ikuti langkah-langkah berikut untuk menjalankan proyek di perangkat Anda:
 
-## Learn More
+### 1. Prasyarat
+Pastikan Anda sudah menginstal **Node.js** (versi 18 ke atas disarankan) dan **npm** di komputer Anda.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Instalasi Dependensi
+Jalankan perintah berikut di terminal pada direktori proyek untuk menginstal semua package yang diperlukan:
+```bash
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Menjalankan Server Development
+Jalankan server lokal dengan menggunakan perintah:
+```bash
+npm run dev
+```
+Setelah server berjalan, buka browser dan akses alamat:
+* **Lokal**: [http://localhost:3000](http://localhost:3000)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Build untuk Produksi
+Jika ingin melakukan build proyek untuk produksi:
+```bash
+npm run build
+```
+Dan jalankan dengan:
+```bash
+npm run start
+```
